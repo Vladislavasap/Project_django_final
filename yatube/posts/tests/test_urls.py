@@ -91,7 +91,8 @@ class PostsURLTests(TestCase):
     def test_urls_guest_client(self):
         """Доступ неавторизованного пользователя"""
         pages: tuple = ('/create/',
-                        f'/posts/{self.post.pk}/edit/')
+                        f'/posts/{self.post.pk}/edit/',
+                        '/follow/')
         for page in pages:
             response = self.guest_client.get(page)
             self.assertEqual(response.status_code, 302)
@@ -102,19 +103,13 @@ class PostsURLTests(TestCase):
             f'/posts/{self.post.author.pk}/edit/')
         self.assertEqual(response.status_code, 302)
 
-    def test_add_comment_only_authuser(self):
-        """Комментировать может только аторизованный пользователь"""
+    def test_add_comment_redirect(self):
+        """Редирект неавторизованного пользователя при попытке комментария"""
         form_data = {'text': 'test com'}
-        response = self.authorized_client.post(
-            reverse('posts:add_comment',
-                    kwargs={'post_id': self.post.pk}),
-            data=form_data, folow=True)
-        self.assertEqual(response.status_code, 302)
         response_guest = self.guest_client.post(
             reverse('posts:add_comment',
                     kwargs={'post_id': self.post.pk}),
             data=form_data, folow=True)
-        self.assertEqual(response.status_code, 302)
         self.assertEqual(response_guest.status_code, 302)
         self.assertRedirects(response_guest,
                              '/auth/login/?next=/posts/1/comment/')

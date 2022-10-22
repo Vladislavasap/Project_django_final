@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
-from posts.models import Group, Post
+from posts.models import Comment, Group, Post
 
 User = get_user_model()
 
@@ -27,6 +27,11 @@ class PostFormTests(TestCase):
             author=cls.user,
             text='отредактированный текст поста',
             group=cls.group
+        )
+        cls.comment = Comment.objects.create(
+            post=cls.post,
+            author=cls.post.author,
+            text='Текст тестового поста'
         )
 
     def setUp(self):
@@ -87,4 +92,17 @@ class PostFormTests(TestCase):
                         author=self.user,
                         pub_date=self.post.pub_date
                         ).exists())
+        self.assertEqual(response.status_code, 302)
+
+    def test_add_comment_only_authuser(self):
+        """Комментировать может только аторизованный пользователь"""
+        form_data = {'text': 'test com'}
+        response = self.authorized_client.post(
+            reverse('posts:add_comment',
+                    kwargs={'post_id': self.post.pk}),
+            data=form_data, folow=True)
+        filter = Comment.objects.all()[0]
+        self.assertEqual(filter.text, 'Текст тестового поста')
+        self.assertEqual(filter.author, self.comment.author)
+        self.assertEqual(filter.post, self.post)
         self.assertEqual(response.status_code, 302)
