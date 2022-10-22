@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html> 
+<html lang="ru"> 
+  <head>    
+    {% block title %}
+      {% if post %}
+        Редактирование поста
+      {% else %}
+        Новый пост
+      {% endif %}
+    {% endblock %}
+  </head>
+  <body>
+    <header>
+      {% include 'includes/header.html' %}
+    </header>
+    <main>
+      {% block content %}
+      <div class="container py-5">
+        <div class="row justify-content-center">
+          <div class="col-md-8 p-5">
+            <div class="card">
+              <div class="card-header">             
+              </div>
+              <div class="card-body">
+                {% include 'includes/form_errors.html' %}
+                {% if is_edit %}
+                <form action="{% url 'posts:post_edit' post.pk %}" enctype="multipart/form-data" method="post"> 
+                {% else %}
+                <form action="{% url 'posts:post_create' %}" enctype="multipart/form-data" method="post">
+                {% endif %}        
+                  {% csrf_token %}          
+                  {% include 'includes/form_create.html' %}
+                  <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                      {% if post %}
+                        Сохранить
+                      {% else %}
+                        Добавить
+                      {% endif %}
+                    </button>
+                    {% if post.group %}
+                    <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>
+                    {% endif %}
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endblock%}
