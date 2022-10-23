@@ -92,7 +92,9 @@ class PostsURLTests(TestCase):
         """Доступ неавторизованного пользователя"""
         pages: tuple = ('/create/',
                         f'/posts/{self.post.pk}/edit/',
-                        '/follow/')
+                        '/follow/',
+                        f'/profile/{self.user.username}/follow/',
+                        f'/profile/{self.user.username}/unfollow/')
         for page in pages:
             response = self.guest_client.get(page)
             self.assertEqual(response.status_code, 302)
@@ -111,8 +113,9 @@ class PostsURLTests(TestCase):
                     kwargs={'post_id': self.post.pk}),
             data=form_data, folow=True)
         self.assertEqual(response_guest.status_code, 302)
+        pkk = self.post.pk
         self.assertRedirects(response_guest,
-                             '/auth/login/?next=/posts/1/comment/')
+                             f'/auth/login/?next=/posts/{pkk}/comment/')
 
     def test_posts_unexisting_page_exists(self):
         """Страница unexisting_page использует кастомный шаблон."""

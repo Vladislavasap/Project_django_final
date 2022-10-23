@@ -41,7 +41,8 @@ def profile(request, username):
     page_obj = pagination(request, posts)
     following = (
         request.user.is_authenticated and Follow.objects.filter(
-            user=request.user, author=author).exists()
+            user=request.user, author=author).exists() and (
+            request.user != author)
     )
     context = {'author': author,
                'page_obj': page_obj,
@@ -70,9 +71,7 @@ def post_create(request):
             return redirect('posts:profile', request.user)
         return render(request, 'posts/create_post.html', {'form': form})
     form = PostForm()
-    context = {
-        'form': form
-    }
+    context = {'form': form}
     return render(request, 'posts/create_post.html', context)
 
 

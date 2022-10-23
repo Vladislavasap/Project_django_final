@@ -234,10 +234,10 @@ class FollowTests(TestCase):
                                               kwargs={'username':
                                                       self.user_following.
                                                       username}))
-        filter = Follow.objects.filter(author=self.user_following)[0]
-        filter1 = Follow.objects.filter(user=self.user_follower)[0]
-        self.assertEqual(filter.author.username, self.user_following.username)
-        self.assertEqual(filter1.user.username, self.user_follower.username)
+        filter1 = Follow.objects.filter(user=self.user_follower).exists()
+        filter2 = Follow.objects.filter(author=self.user_following).exists()
+        self.assertEqual(filter1, True)
+        self.assertEqual(filter2, True)
 
     def test_unfollow(self):
         Follow.objects.create(user=self.user_follower,
