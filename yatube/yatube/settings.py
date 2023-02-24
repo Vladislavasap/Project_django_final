@@ -26,6 +26,8 @@ SECRET_KEY = '0rr(*0j3w!@guq^yb#*)4^ig0ho_)l@y)-t&m+ryk%9l8)tyz7'
 DEBUG = True
 
 ALLOWED_HOSTS = ALLOWED_HOSTS = [
+    'www.Ladislav.pythonanywhere.com',
+    'Ladislav.pythonanywhere.com',
     'localhost',
     '127.0.0.1',
     '[::1]',
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sorl.thumbnail',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +60,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+] 
 
 CACHES = {
     'default': {
