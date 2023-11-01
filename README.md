@@ -41,6 +41,6 @@ python manage.py runserver
 
 
 # Автор
-Vladisla
+Vladislav
 
 
